@@ -35,7 +35,8 @@ void stream_copy(int M, int N, int lda, int n_loops) {
   free(A_in);
   free(A_out);
 }
-void main(){
+
+int main(){
     int M = 64;
     int N = 64;
     int lda = N;
