@@ -32,7 +32,7 @@ void fp32_stream_copy(int M, int N, int lda, int n_loops) {
   float *A_in  = malloc(M * lda * sizeof(float));
   float *A_out = malloc(M * lda * sizeof(float));
   init(A_in, M * lda);
-  memset(A_out, 0.0);
+  memset(A_out, 0.0, M * lda * sizeof(float));
 
   struct timespec start, end;
   double time_used = 0.0;
@@ -59,7 +59,7 @@ void fp32_convert_fp16_copy(int M, int N, int lda, int n_loops) {
   float *A_in  = malloc(M * lda * sizeof(float));
   __fp16 *A_out = malloc(M * lda * sizeof(__fp16));
   init(A_in, M * lda);
-  memset(A_out, 0.0);
+  memset(A_out, 0.0, M * lda * sizeof(__fp16));
 
   struct timespec start, end;
   double time_used = 0.0;
