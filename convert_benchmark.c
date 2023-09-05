@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
 #include <omp.h>
+#include <cblas.h>
 
 static double get_time(struct timespec *start, struct timespec *end) {
     return end->tv_sec - start->tv_sec + (end->tv_nsec - start->tv_nsec) * 1e-9;
@@ -50,6 +52,8 @@ void fp32_stream_copy(int M, int N, int lda, int n_loops) {
   printf("fp32 stream copy latency: %.6f ms\n", time_used * 1e3 / n_loops);
   printf("A_in[0] = %.6f, A_out[0] = %.6f\n", A_in[0], A_out[0]);
   printf("A_in[0] = %#x, A_out[0] = %#x\n", ((int*)A_in)[0], ((int*)A_out)[0]);
+  printf("A_in[1] = %.6f, A_out[1] = %.6f\n", A_in[1], A_out[1]);
+  printf("A_in[1] = %#x, A_out[1] = %#x\n", ((int*)A_in)[1], ((int*)A_out)[1]);
   free(A_in);
   free(A_out);
 }
@@ -76,6 +80,12 @@ void fp32_convert_fp16_copy(int M, int N, int lda, int n_loops) {
   printf("fp32 convert fp16 latency: %.6f ms\n", time_used * 1e3 / n_loops);
   printf("A_in[0] = %.6f, A_out[0] = %.6f\n", A_in[0], A_out[0]);
   printf("A_in[0] = %#x, A_out[0] = %#x\n", ((int*)A_in)[0], ((short*)A_out)[0]);
+  float tmp = A_in[0];
+  short t = ((tmp & 0x007fffff) >> 13) | ((tmp & 0x80000000) >> 16) | (((tmp & 0x7f800000) >> 13) - ((127 - 15) << 10));
+  if (tmp & 0x1000) {t++;}
+  printf("double check A_in[0] = %#x\n", t);
+  printf("A_in[1] = %.6f, A_out[1] = %.6f\n", A_in[1], A_out[1]);
+  printf("A_in[1] = %#x, A_out[1] = %#x\n", ((int*)A_in)[1], ((short*)A_out)[1]);
   free(A_in);
   free(A_out);
 }
@@ -90,10 +100,10 @@ int main(){
     printf("-----------------------\n");
 
     int M = 256;
-    int N = 256;
-    int lda = N;
+    int K = 256;
+    int lda = K;
 
-    fp32_stream_copy(M, N, lda, 1000);
-    fp32_convert_fp16_copy(M, N, lda, 1000);
+    fp32_stream_copy(M, K, lda, 1000);
+    fp32_convert_fp16_copy(M, K, lda, 1000);
     printf("-----------------------\n");
 }
