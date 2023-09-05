@@ -16,6 +16,13 @@ static void init(float *buf, int size) {
   }
 }
 
+static void report_num_threads(){
+	#pragma omp single
+	{
+		printf("number of threads = %d", omp_get_num_threads());
+	}
+}
+
 void* _mm_malloc(size_t align, size_t sz)
 {
   void *ptr;
@@ -47,7 +54,7 @@ void fp32_stream_copy(int M, int N, int lda, int n_loops) {
   }
   clock_gettime(CLOCK_MONOTONIC_RAW, &end);
   time_used = get_time(&start, &end);
-  printf("fp32 stream copy latency: %.6f ms\n", time_used * 1e3/ n_loops);
+  printf("fp32 stream copy latency: %.6f ms\n", time_used * 1e3 / n_loops);
   printf("A_in[0] = %.6f, A_out[0] = %.6f\n", A_in[0], A_out[0]);
   printf("A_in[0] = %#x, A_out[0] = %#x\n", ((int*)A_in)[0], ((int*)A_out)[0]);
   free(A_in);
@@ -73,7 +80,7 @@ void fp32_convert_fp16_copy(int M, int N, int lda, int n_loops) {
   }
   clock_gettime(CLOCK_MONOTONIC_RAW, &end);
   time_used = get_time(&start, &end);
-  printf("fp32 convert fp16 latency: %.6f ms\n", time_used * 1e3/ n_loops);
+  printf("fp32 convert fp16 latency: %.6f ms\n", time_used * 1e3 / n_loops);
   printf("A_in[0] = %.6f, A_out[0] = %.6f\n", A_in[0], A_out[0]);
   printf("A_in[0] = %#x, A_out[0] = %#x\n", ((int*)A_in)[0], ((short*)A_out)[0]);
   free(A_in);
@@ -81,10 +88,10 @@ void fp32_convert_fp16_copy(int M, int N, int lda, int n_loops) {
 }
 
 int main(){
-    int M = 128;
-    int N = 128;
+    int M = 256;
+    int N = 256;
     int lda = N;
-
+    report_num_threads();
     fp32_stream_copy(M, N, lda, 1000);
     fp32_convert_fp16_copy(M, N, lda, 1000);
 }
