@@ -80,7 +80,7 @@ void fp32_convert_fp16_copy(int M, int N, int lda, int n_loops) {
   printf("fp32 convert fp16 latency: %.6f ms\n", time_used * 1e3 / n_loops);
   printf("A_in[0] = %.6f, A_out[0] = %.6f\n", A_in[0], A_out[0]);
   printf("A_in[0] = %#x, A_out[0] = %#x\n", ((int*)A_in)[0], ((short*)A_out)[0]);
-  int tmp = (int)(A_in[0]);
+  int tmp = *(int*)(&A_in[0]);
   short t = ((tmp & 0x007fffff) >> 13) | ((tmp & 0x80000000) >> 16) | (((tmp & 0x7f800000) >> 13) - ((127 - 15) << 10));
   if (tmp & 0x1000) {t++;}
   printf("double check A_in[0] = %#x\n", t);
