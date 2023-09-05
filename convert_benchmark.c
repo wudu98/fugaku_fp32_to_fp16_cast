@@ -45,7 +45,7 @@ void fp32_convert_fp16_copy(int M, int N, int lda, int n_loops) {
   // float *A_in  = static_cast<float*>(_mm_malloc(64, M * lda * sizeof(float)));
   // float *A_out = static_cast<float*>(_mm_malloc(64, M * lda * sizeof(float)));
   float *A_in  = malloc(M * lda * sizeof(float));
-  half  *A_out = malloc(M * lda * sizeof(half));
+  __fp16 *A_out = malloc(M * lda * sizeof(__fp16));
 
   struct timespec start, end;
   clock_gettime(CLOCK_MONOTONIC_RAW, &start);
@@ -53,7 +53,7 @@ void fp32_convert_fp16_copy(int M, int N, int lda, int n_loops) {
     #pragma omp parallel for collapse(2)
     for (int i = 0; i < M; i++){
       for (int j = 0; j < N; j++){
-        A_out[i * lda + j] = (half)A_in[i * lda + j];
+        A_out[i * lda + j] = (__fp16)A_in[i * lda + j];
       }
     }
   }
