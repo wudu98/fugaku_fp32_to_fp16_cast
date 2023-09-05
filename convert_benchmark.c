@@ -18,7 +18,7 @@ void* _mm_malloc(size_t align, size_t sz)
 }
 
 
-void stream_copy(int M, int N, int lda, int n_loops) {
+void fp32_stream_copy(int M, int N, int lda, int n_loops) {
   // float *A_in  = static_cast<float*>(_mm_malloc(64, M * lda * sizeof(float)));
   // float *A_out = static_cast<float*>(_mm_malloc(64, M * lda * sizeof(float)));
   float *A_in  = malloc(M * lda * sizeof(float));
@@ -36,7 +36,30 @@ void stream_copy(int M, int N, int lda, int n_loops) {
   }
   clock_gettime(CLOCK_MONOTONIC_RAW, &end);
   double time_used = get_time(&start, &end);
-  printf("latency: %.6f ms\n", time_used * 1e3/ n_loops);
+  printf("fp32 stream copy latency: %.6f ms\n", time_used * 1e3/ n_loops);
+  free(A_in);
+  free(A_out);
+}
+
+void fp32_convert_fp16_copy(int M, int N, int lda, int n_loops) {
+  // float *A_in  = static_cast<float*>(_mm_malloc(64, M * lda * sizeof(float)));
+  // float *A_out = static_cast<float*>(_mm_malloc(64, M * lda * sizeof(float)));
+  float *A_in  = malloc(M * lda * sizeof(float));
+  half  *A_out = malloc(M * lda * sizeof(half));
+
+  struct timespec start, end;
+  clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+  for (int _loop = 0; _loop < n_loops; ++_loop) {
+    #pragma omp parallel for collapse(2)
+    for (int i = 0; i < M; i++){
+      for (int j = 0; j < N; j++){
+        A_out[i * lda + j] = (half)A_in[i * lda + j];
+      }
+    }
+  }
+  clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+  double time_used = get_time(&start, &end);
+  printf("fp32 convert fp16 latency: %.6f ms\n", time_used * 1e3/ n_loops);
   free(A_in);
   free(A_out);
 }
@@ -46,5 +69,6 @@ int main(){
     int N = 64;
     int lda = N;
 
-    stream_copy(M, N, lda, 1000);
+    fp32_stream_copy(M, N, lda, 1000);
+    fp32_convert_fp16_copy(M, N, lda, 1000);
 }
