@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <omp.h>
@@ -28,8 +29,6 @@ void* _mm_malloc(size_t align, size_t sz)
 
 
 void fp32_stream_copy(int M, int N, int lda, int n_loops) {
-  // float *A_in  = static_cast<float*>(_mm_malloc(64, M * lda * sizeof(float)));
-  // float *A_out = static_cast<float*>(_mm_malloc(64, M * lda * sizeof(float)));
   float *A_in  = malloc(M * lda * sizeof(float));
   float *A_out = malloc(M * lda * sizeof(float));
   init(A_in, M * lda);
@@ -49,15 +48,14 @@ void fp32_stream_copy(int M, int N, int lda, int n_loops) {
   clock_gettime(CLOCK_MONOTONIC_RAW, &end);
   time_used = get_time(&start, &end);
   printf("fp32 stream copy latency: %.6f ms\n", time_used * 1e3/ n_loops);
+  printf("A_in[0] = %.6f, A_out[0] = %.6f\n", A_in[0], A_out[0]);
   printf("A_in[0] = %#x, A_out[0] = %#x\n", ((int*)A_in)[0], ((int*)A_out)[0]);
   free(A_in);
   free(A_out);
 }
 
 void fp32_convert_fp16_copy(int M, int N, int lda, int n_loops) {
-  // float *A_in  = static_cast<float*>(_mm_malloc(64, M * lda * sizeof(float)));
-  // float *A_out = static_cast<float*>(_mm_malloc(64, M * lda * sizeof(float)));
-  float *A_in  = malloc(M * lda * sizeof(float));
+  float  *A_in  = malloc(M * lda * sizeof(float));
   __fp16 *A_out = malloc(M * lda * sizeof(__fp16));
   init(A_in, M * lda);
   memset(A_out, 0.0, M * lda * sizeof(__fp16));
@@ -76,7 +74,8 @@ void fp32_convert_fp16_copy(int M, int N, int lda, int n_loops) {
   clock_gettime(CLOCK_MONOTONIC_RAW, &end);
   time_used = get_time(&start, &end);
   printf("fp32 convert fp16 latency: %.6f ms\n", time_used * 1e3/ n_loops);
-  printf("A_in[0] = %#x, A_out[0] = %#x\n", ((int*)A_in)[0], ((int*)A_out)[0]);
+  printf("A_in[0] = %.6f, A_out[0] = %.6f\n", A_in[0], A_out[0]);
+  printf("A_in[0] = %#x, A_out[0] = %#x\n", ((int*)A_in)[0], ((short*)A_out)[0]);
   free(A_in);
   free(A_out);
 }
