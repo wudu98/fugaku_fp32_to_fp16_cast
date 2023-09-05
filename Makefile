@@ -1,6 +1,6 @@
 CXX = fcc
 CXX_SRC = convert_benchmark.cpp
-CFLAGS = -std=gnu++11 -Nclang -Kfast,ocl,openmp -fPIC
+CFLAGS = -Nclang -Kfast,ocl,openmp -fPIC
 BLAS = -SSL2BLAMP -lm -lfjomp
 
 all: benchmark
