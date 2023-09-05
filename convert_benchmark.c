@@ -19,8 +19,10 @@ void* _mm_malloc(size_t align, size_t sz)
 
 
 void stream_copy(int M, int N, int lda, int n_loops) {
-  float *A_in  = static_cast<float*>(_mm_malloc(64, M * lda * sizeof(float)));
-  float *A_out = static_cast<float*>(_mm_malloc(64, M * lda * sizeof(float)));
+  // float *A_in  = static_cast<float*>(_mm_malloc(64, M * lda * sizeof(float)));
+  // float *A_out = static_cast<float*>(_mm_malloc(64, M * lda * sizeof(float)));
+  float *A_in  = malloc(M * lda * sizeof(float));
+  float *A_out = malloc(M * lda * sizeof(float));
 
   struct timespec start, end;
   clock_gettime(CLOCK_MONOTONIC_RAW, &start);
