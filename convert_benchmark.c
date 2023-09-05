@@ -50,7 +50,7 @@ void fp32_convert_fp16_copy(int M, int N, int lda, int n_loops) {
   struct timespec start, end;
   clock_gettime(CLOCK_MONOTONIC_RAW, &start);
   for (int _loop = 0; _loop < n_loops; ++_loop) {
-    #pragma omp parallel for collapse(2)
+    // #pragma omp parallel for collapse(2)
     for (int i = 0; i < M; i++){
       for (int j = 0; j < N; j++){
         A_out[i * lda + j] = (__fp16)A_in[i * lda + j];

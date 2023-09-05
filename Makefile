@@ -8,3 +8,6 @@ all: benchmark
 benchmark:
 	$(CXX) $(CXX_SRC) $(CFLAGS) $(BLAS) -o benchmark
 
+clean:
+	rm -rf benchmark
+
