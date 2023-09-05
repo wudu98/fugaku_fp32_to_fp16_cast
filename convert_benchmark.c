@@ -35,7 +35,7 @@ void stream_copy(int M, int N, int lda, int n_loops) {
     }
   }
   clock_gettime(CLOCK_MONOTONIC_RAW, &end);
-  time_used = get_time(&start, &end);
+  double time_used = get_time(&start, &end);
   printf("latency: %.6f ms\n", time_used * 1e3/ n_loops);
   free(A_in);
   free(A_out);
