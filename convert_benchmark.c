@@ -19,7 +19,7 @@ static void init(float *buf, int size) {
 static void report_num_threads(){
 	#pragma omp single
 	{
-		printf("number of threads = %d", omp_get_num_threads());
+		printf("number of threads = %d\n", omp_get_num_threads());
 	}
 }
 
@@ -88,10 +88,14 @@ void fp32_convert_fp16_copy(int M, int N, int lda, int n_loops) {
 }
 
 int main(){
+    int num_threads = 48;
+    omp_set_num_threads(num_threads);
+    report_num_threads();
+
     int M = 256;
     int N = 256;
     int lda = N;
-    report_num_threads();
+
     fp32_stream_copy(M, N, lda, 1000);
     fp32_convert_fp16_copy(M, N, lda, 1000);
 }
