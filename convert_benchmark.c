@@ -129,6 +129,7 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
           : "cc", "memory" , "x6", "x7", "x8", "x9", "x10", "x11", "z0", "z1", "z2"
         );
       }
+    }
   }
   clock_gettime(CLOCK_MONOTONIC_RAW, &end);
   time_used = get_time(&start, &end);
