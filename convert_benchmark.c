@@ -108,7 +108,8 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
     #pragma omp parallel for
     for (int i = 0; i < M; i++){
         asm volatile(
-          "mul      x6, %[offset_m], %[lda]                        \n"
+          // "mul      x6, %[offset_m], %[lda]                        \n"
+          "mul      x6, #0                        \n"
           "mov      x7, %[N]                                       \n"
           "mov      x8, #0                                         \n"
           "whilelt  p0.s, x8, x7                                   \n"
