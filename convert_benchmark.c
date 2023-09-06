@@ -108,19 +108,19 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
     #pragma omp parallel for
     for (int i = 0; i < M; i++){
         asm volatile(
-          "mov      x6, %[N]                                       \n"
-          "mul      x7, %[offset_m], %[lda]                        \n"
+          "mul      x6, %[offset_m], %[lda]                        \n"
+          "mov      w7, %[N]                                       \n"
           "mov      x8, #0                                         \n"
-          "whilelt  p0.s, x8, x6                                   \n"
-          "add      x9,  %[A_in],  x7, lsl #2                      \n"
-          "add      x10, %[A_out], x7, lsl #1                      \n"
+          "whilelt  p0.s, x8, x7                                   \n"
+          "add      x9,  %[A_in],  x6, lsl #2                      \n"
+          "add      x10, %[A_out], x6, lsl #1                      \n"
 
         ".L_loop_Start:                                            \n"
           "ld1w     z0.s, p0/z, [x9,  x8, lsl #2]                  \n"
           "fcvt     z0.h, p0/m, z0.s                               \n"
           "st1h     z0.h, p0,   [x10, x8, lsl #1]                  \n"
           "incw     x8                                             \n"
-          "whilelt  p0.s, x8, x6                                   \n"
+          "whilelt  p0.s, x8, x7                                   \n"
           "b.first  .L_loop_Start                                  \n"
 
         ".L_loop_End:                                              \n"
@@ -134,7 +134,6 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
 
           : "cc", "memory" , "x6", "x7", "x8", "x9", "x10", "z0"
         );
-        // A_out[i * lda + j] = (__fp16)A_in[i * lda + j];
       }
   }
   clock_gettime(CLOCK_MONOTONIC_RAW, &end);
