@@ -234,6 +234,24 @@ void fp32_convert_fp16_copy_v2(int M, int N, int lda, int n_loops) {
   t = ((tmp & 0x007fffff) >> 13) | ((tmp & 0x80000000) >> 16) | (((tmp & 0x7f800000) >> 13) - ((127 - 15) << 10));
   if (tmp & 0x1000) {t++;}
   printf("double check A_in[2] convert to fp16 = %#x\n", t);
+
+  int flag = 1;
+  for (int i = 0; i < M; i++){
+      for (int j = 0; j < N; j++){
+        const offset = i * lda + j;
+        tmp = *(int*)(&A_in[offset]);
+        t = ((tmp & 0x007fffff) >> 13) | ((tmp & 0x80000000) >> 16) | (((tmp & 0x7f800000) >> 13) - ((127 - 15) << 10));
+        if (tmp & 0x1000) {t++;}
+        if ((((short*)A_out)[offset] != t ) && flag == 1){
+          printf("error [%d][%d]\n", i, j);
+          flag = 0;
+        }
+      }
+  }
+  if (flag == 1){
+    printf("pass!\n");
+  }
+
   free(A_in);
   free(A_out);
 }
