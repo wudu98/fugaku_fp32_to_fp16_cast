@@ -134,7 +134,6 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
         );
         // A_out[i * lda + j] = (__fp16)A_in[i * lda + j];
       }
-    }
   }
   clock_gettime(CLOCK_MONOTONIC_RAW, &end);
   time_used = get_time(&start, &end);
