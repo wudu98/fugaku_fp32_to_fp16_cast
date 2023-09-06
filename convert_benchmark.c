@@ -128,7 +128,7 @@ void fp32_convert_fp16_copy_v0(int M, int N, int lda, int n_loops) {
   free(A_out);
 }
 
-void fp32_convert_fp16_copy_v0(int M, int N, int lda, int n_loops) {
+void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
   float  *A_in  = malloc(M * lda * sizeof(float));
   __fp16 *A_out = malloc(M * lda * sizeof(__fp16));
   init(A_in, M * lda);
