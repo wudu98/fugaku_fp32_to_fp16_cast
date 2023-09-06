@@ -197,9 +197,10 @@ void fp32_convert_fp16_copy_v2(int M, int N, int lda, int n_loops) {
           "ld1w     z1.s, p0/z, [x10]                              \n"
           "fcvt     z0.h, p0/m, z0.s                               \n"
           "fcvt     z1.h, p0/m, z1.s                               \n"
-          "st1h     z0.s, p0,   [x11]                              \n"
-          "st1h     z1.s, p0,   [x12]                              \n"
-          // "st2h     {z0.s,z1.s}, p0, [x11]                              \n"
+          "uzp1     z2.s, z0.s, z1.s                               \n"
+          "st1w     z2.s, p0,   [x11]                              \n"
+          // "st1h     z0.s, p0,   [x11]                              \n"
+          // "st1h     z1.s, p0,   [x12]                              \n"
 
           : [A_out]"=r"(A_out)
           : "0"(A_out),
