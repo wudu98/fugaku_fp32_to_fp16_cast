@@ -96,9 +96,6 @@ void fp32_convert_fp16_copy_v0(int M, int N, int lda, int n_loops) {
 
 
 void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
-  const int mc = 4;
-  const int nc = 128;
-
   float  *A_in  = malloc(M * lda * sizeof(float));
   __fp16 *A_out = malloc(M * lda * sizeof(__fp16));
   init(A_in, M * lda);
@@ -108,28 +105,32 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
   double time_used = 0.0;
   clock_gettime(CLOCK_MONOTONIC_RAW, &start);
   for (int _loop = 0; _loop < n_loops; ++_loop) {
-    #pragma omp parallel for collapse(2)
-    for (int i = 0; i < M; i+=mc){
-      for (int j = 0; j < N; j+=nc){
+    #pragma omp parallel for
+    for (int i = 0; i < M; i++){
         asm volatile(
-          "ptrue  p0.s                                           \n"
-          "add    x6, %[A_in], %[offset_m], lsr #9               \n"
-          "add    x6, x6, %[offset_n], lsr #2                    \n"
-          "add    x7, %[A_out], %[offset_m], lsr #8              \n"
-          "add    x7, x7, %[offset_n], lsr #1                    \n"
-          "ld1w   z0.s, p0/z, [x6]                               \n"
-          "fcvt   z0.h, p0/m, z0.s                               \n"
-          "st1h   z0.h, p0, [x7]                                 \n"
+          "mov      x4, %[N]                                       \n"
+          "mov      x5, #0                                         \n"
+          "whilelt  p0.s, x5, x4                                   \n"
+          "add      x6, %[A_in], %[offset_m], lsr #9               \n"
+          "add      x7, %[A_out], %[offset_m], lsr #8              \n"
 
-          : [A_in]"=r"(A_in),
-            [A_out]"=r"(A_out),
-            [offset_m]"=r"(i),
-            [offset_n]"=r"(j)
-          : "0"(A_in),
-            "1"(A_out),
-            "2"(i),
-            "3"(j)
-          : "cc", "memory" , "x6", "x7", "z0", "z1"
+        ".L_loop_Start:"
+          "ld1w     z0.s, p0/z, [x6, x5, lsr #2]                   \n"
+          "fcvt     z0.h, p0/m, z0.s                               \n"
+          "st1h     z0.h, p0, [x7, x5, lsr #1]                     \n"
+          "incw     x5                                             \n"
+          "whilelt  p0.s, x5, x4                                   \n"
+          "b.first  .L_loop_Start                                  \n"
+
+        ".L_loop_End:"
+
+          : [A_out]"=r"(A_out)
+          : "0"(A_out),
+            [A_in]"r"(A_in),
+            [offset_m]"r"(i),
+            [N]"r"(N)
+
+          : "cc", "memory" , "x4", "x5", "x6", "x7", "z0"
         );
         // A_out[i * lda + j] = (__fp16)A_in[i * lda + j];
       }
