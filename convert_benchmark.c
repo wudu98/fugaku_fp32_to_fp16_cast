@@ -97,7 +97,7 @@ void fp32_convert_fp16_copy(int M, int N, int lda, int n_loops) {
 int main(){
     int num_threads = 48;
     omp_set_num_threads(num_threads);
-    printf("number of threads = %d\n", omp_get_max_threads());
+    printf("number of threads = %d\n", omp_get_num_threads());
     printf("-----------------------\n");
 
     int M = 256;
