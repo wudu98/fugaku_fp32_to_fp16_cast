@@ -107,9 +107,9 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
   for (int _loop = 0; _loop < n_loops; ++_loop) {
     #pragma omp parallel for
     for (int i = 0; i < M; i++){
+        const offset = i * lda;
         asm volatile(
-          // "mul      x6, %[offset_m], %[lda]                        \n"
-          "mov      x6, #0                        \n"
+          "mov      x6, %[offset_m]                                \n"
           "mov      x7, %[N]                                       \n"
           "mov      x8, #0                                         \n"
           "whilelt  p0.s, x8, x7                                   \n"
@@ -129,9 +129,8 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
           : [A_out]"=r"(A_out)
           : "0"(A_out),
             [A_in]"r"(A_in),
-            [offset_m]"r"(i),
-            [N]"r"(N),
-            [lda]"r"(lda)
+            [offset]"r"(offset),
+            [N]"r"(N)
 
           : "cc", "memory" , "x6", "x7", "x8", "x9", "x10", "z0"
         );
