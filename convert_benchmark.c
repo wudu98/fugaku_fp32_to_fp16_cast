@@ -40,7 +40,8 @@ void fp32_stream_copy(int M, int N, int lda, int n_loops) {
   double time_used = 0.0;
   clock_gettime(CLOCK_MONOTONIC_RAW, &start);
   for (int _loop = 0; _loop < n_loops; ++_loop) {
-    #pragma omp parallel for collapse(2)
+    #pragma omp parallel for
+    // #pragma omp parallel for collapse(2)
     for (int i = 0; i < M; i++){
       for (int j = 0; j < N; j++){
         A_out[i * lda + j] = A_in[i * lda + j];
