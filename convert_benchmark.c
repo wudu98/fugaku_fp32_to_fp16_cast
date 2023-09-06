@@ -127,8 +127,8 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
             [offset_n]"=r"(j)
           : "0"(A_in),
             "1"(A_out),
-            "2"(offset_m),
-            "3"(offset_n)
+            "2"(i),
+            "3"(j)
           : "cc", "memory" , "x6", "x7", "z0", "z1"
         );
         // A_out[i * lda + j] = (__fp16)A_in[i * lda + j];
