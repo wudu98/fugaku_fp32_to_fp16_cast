@@ -113,15 +113,17 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
           "mov      x7, %[N]                                       \n"
           "mov      x8, #0                                         \n"
           "whilelt  p0.s, x8, x7                                   \n"
+          "and      p1.b, p0/m, #0b010101                 \n"
           "add      x9,  %[A_in],  x6, lsl #2                      \n"
           "add      x10, %[A_out], x6, lsl #1                      \n"
 
         ".L_loop_Start:                                            \n"
           "ld1w     z0.s, p0/z, [x9,  x8, lsl #2]                  \n"
           "fcvt     z0.h, p0/m, z0.s                               \n"
-          // "st1h     z0.h, p0,   [x10, x8, lsl #1]                  \n"
+          "st1h     z0.h, p1,   [x10, x8, lsl #1]                  \n"
           "incw     x8                                             \n"
           "whilelt  p0.s, x8, x7                                   \n"
+          "and      p1.b, p0/m, #0b010101                 \n"
           "b.first  .L_loop_Start                                  \n"
 
         ".L_loop_End:                                              \n"
