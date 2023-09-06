@@ -121,11 +121,14 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
           "fcvt   z1.h, p0/m, z0.s                               \n"
           "st1w   z1.h, p0, [x7]                                 \n"
 
-          : [A_out]"=r"(A_out)
-          : "0"(A_out),
-            [A_in]"r"(A_in),
-            [offset_m]"r"(i),
-            [offset_n]"r"(j)
+          : [A_in]"=r"(A_in),
+            [A_out]"=r"(A_out),
+            [offset_m]"=r"(i),
+            [offset_n]"=r"(j)
+          : "0"(A_in),
+            "1"(A_out),
+            "2"(offset_m),
+            "3"(offset_n)
           : "cc", "memory" , "x6", "x7", "z0", "z1"
         );
         // A_out[i * lda + j] = (__fp16)A_in[i * lda + j];
