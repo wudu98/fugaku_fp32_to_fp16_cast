@@ -109,17 +109,18 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
     for (int i = 0; i < M; i++){
         asm volatile(
           "mov      x4, %[N]                                       \n"
-          "mov      x5, #0                                         \n"
-          "whilelt  p0.s, x5, x4                                   \n"
-          "add      x6, %[A_in], %[offset_m], lsl #9               \n"
-          "add      x7, %[A_out], %[offset_m], lsl #8              \n"
+          "mul      x5, x4, %[offset_m]"
+          "mov      x6, #0                                         \n"
+          "whilelt  p0.s, x6, x4                                   \n"
+          "add      x7, %[A_in], x5, lsl #2               \n"
+          "add      x8, %[A_out], x5, lsl #1              \n"
 
         ".L_loop_Start:                                            \n"
-          "ld1w     z0.s, p0/z, [x6, x5, lsl #2]                   \n"
+          "ld1w     z0.s, p0/z, [x7, x6, lsl #2]                   \n"
           "fcvt     z0.h, p0/m, z0.s                               \n"
-          "st1h     z0.h, p0, [x7, x5, lsl #1]                     \n"
-          "incw     x5                                             \n"
-          "whilelt  p0.s, x5, x4                                   \n"
+          "st1h     z0.h, p0, [x8, x6, lsl #1]                     \n"
+          "incw     x6                                             \n"
+          "whilelt  p0.s, x6, x4                                   \n"
           "b.first  .L_loop_Start                                  \n"
 
         ".L_loop_End:                                              \n"
@@ -130,7 +131,7 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
             [offset_m]"r"(i),
             [N]"r"(N)
 
-          : "cc", "memory" , "x4", "x5", "x6", "x7", "z0"
+          : "cc", "memory" , "x4", "x5", "x6", "x7", "x8", "z0"
         );
         // A_out[i * lda + j] = (__fp16)A_in[i * lda + j];
       }
