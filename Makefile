@@ -1,5 +1,5 @@
 CXX = fcc
-CFLAGS = -std=gnu11 -Nclang -Kfast,ocl,openmp -fPIC --mattr=+sve
+CFLAGS = -std=gnu11 -Nclang -Kfast,ocl,openmp -fPIC
 BLAS = -SSL2BLAMP -lm -lfjomp
 
 CXX_SRC = convert_benchmark.c
