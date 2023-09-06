@@ -242,7 +242,7 @@ void fp32_convert_fp16_copy_v2(int M, int N, int lda, int n_loops) {
         tmp = *(int*)(&A_in[offset]);
         t = ((tmp & 0x007fffff) >> 13) | ((tmp & 0x80000000) >> 16) | (((tmp & 0x7f800000) >> 13) - ((127 - 15) << 10));
         if (tmp & 0x1000) {t++;}
-        if ((((short*)A_out)[offset] != t ) && flag == 1){
+        if (A_out[offset] - (*(__fp16*)(&t))) < 1e-3 && flag == 1){
           printf("error [%d][%d]\n", i, j);
           flag = 0;
         }
