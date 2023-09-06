@@ -175,6 +175,6 @@ int main(){
     fp32_convert_fp16_copy_v0(M, K, lda, 10);
     printf("-----------------------\n");
 
-    fp32_convert_fp16_copy_v1(M, K, lda, 10);
-    printf("-----------------------\n");
+    // fp32_convert_fp16_copy_v1(M, K, lda, 10);
+    // printf("-----------------------\n");
 }
