@@ -111,7 +111,7 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
         const offset = i * lda + j;
         asm volatile(
           "mov      x6, %[offset]                                  \n"
-          "pture    p0.b                                           \n"
+          "ptrue    p0.b                                           \n"
           "add      x9,  %[A_in],  x6, lsl #2                      \n"
           // "add      x10, x9, #64                                   \n"
           "add      x11, %[A_out], x6, lsl #1                      \n"
