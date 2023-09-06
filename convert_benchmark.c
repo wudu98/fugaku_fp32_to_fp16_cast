@@ -112,6 +112,7 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
         asm volatile(
           "mov      x6, %[offset]                                  \n"
           "ptrue    p0.b                                           \n"
+          "mov      p1.b, #1                                       \n"
           "add      x9,  %[A_in],  x6, lsl #2                      \n"
           "add      x10, x9, #64                                   \n"
           "add      x11, %[A_out], x6, lsl #1                      \n"
@@ -119,7 +120,7 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
           "ld1w     z1.s, p0/z, [x10]                              \n"
           "fcvt     z0.h, p0/m, z0.s                               \n"
           "fcvt     z1.h, p0/m, z1.s                               \n"
-          "st2h     {z0.h,z1.h}, p0, [x11]                              \n"
+          "st2h     {z0.h,z1.h}, p1, [x11]                              \n"
 
           : [A_out]"=r"(A_out)
           : "0"(A_out),
