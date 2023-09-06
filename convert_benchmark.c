@@ -83,7 +83,7 @@ void fp32_convert_fp16_copy(int M, int N, int lda, int n_loops) {
   int tmp = *(int*)(&A_in[0]);
   short t = ((tmp & 0x007fffff) >> 13) | ((tmp & 0x80000000) >> 16) | (((tmp & 0x7f800000) >> 13) - ((127 - 15) << 10));
   if (tmp & 0x1000) {t++;}
-  printf("double check A_in[0] = %#x\n", t);
+  printf("double check A_in[0] convert to fp16 = %#x\n", t);
   printf("A_in[1] = %.6f, A_out[1] = %.6f\n", A_in[1], A_out[1]);
   printf("A_in[1] = %#x, A_out[1] = %#x\n", ((int*)A_in)[1], ((short*)A_out)[1]);
   free(A_in);
@@ -93,10 +93,10 @@ void fp32_convert_fp16_copy(int M, int N, int lda, int n_loops) {
 int main(){
     int num_threads = 48;
     omp_set_num_threads(num_threads);
-    #pragma omp single
-	  {
+    // #pragma omp single
+	  // {
       printf("number of threads = %d\n", omp_get_num_threads());
-    }
+    // }
     printf("-----------------------\n");
 
     int M = 256;
