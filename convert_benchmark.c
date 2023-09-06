@@ -108,19 +108,19 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
     #pragma omp parallel for
     for (int i = 0; i < M; i++){
         asm volatile(
-          "mov      x4, %[N]                                       \n"
-          "mul      x5, x4, %[offset_m]"
-          "mov      x6, #0                                         \n"
-          "whilelt  p0.s, x6, x4                                   \n"
-          "add      x7, %[A_in], x5, lsl #2               \n"
-          "add      x8, %[A_out], x5, lsl #1              \n"
+          "mov      x6, %[N]                                       \n"
+          "mul      x7, %[offset_m], %[lda]                        \n"
+          "mov      x8, #0                                         \n"
+          "whilelt  p0.s, x8, x6                                   \n"
+          "add      x9,  %[A_in],  x7, lsl #2                      \n"
+          "add      x10, %[A_out], x7, lsl #1                      \n"
 
         ".L_loop_Start:                                            \n"
-          "ld1w     z0.s, p0/z, [x7, x6, lsl #2]                   \n"
+          "ld1w     z0.s, p0/z, [x9,  x8, lsl #2]                  \n"
           "fcvt     z0.h, p0/m, z0.s                               \n"
-          "st1h     z0.h, p0, [x8, x6, lsl #1]                     \n"
-          "incw     x6                                             \n"
-          "whilelt  p0.s, x6, x4                                   \n"
+          "st1h     z0.h, p0,   [x10, x8, lsl #1]                  \n"
+          "incw     x8                                             \n"
+          "whilelt  p0.s, x8, x6                                   \n"
           "b.first  .L_loop_Start                                  \n"
 
         ".L_loop_End:                                              \n"
@@ -129,9 +129,10 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
           : "0"(A_out),
             [A_in]"r"(A_in),
             [offset_m]"r"(i),
-            [N]"r"(N)
+            [N]"r"(N),
+            [lda]"r"(lda)
 
-          : "cc", "memory" , "x4", "x5", "x6", "x7", "x8", "z0"
+          : "cc", "memory" , "x6", "x7", "x8", "x9", "x10", "z0"
         );
         // A_out[i * lda + j] = (__fp16)A_in[i * lda + j];
       }
