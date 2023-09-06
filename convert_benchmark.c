@@ -101,6 +101,8 @@ int main(){
     int lda = K;
 
     fp32_stream_copy(M, K, lda, 1000);
+    printf("-----------------------\n");
+    
     fp32_convert_fp16_copy(M, K, lda, 1000);
     printf("-----------------------\n");
 }
