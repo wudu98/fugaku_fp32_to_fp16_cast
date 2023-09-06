@@ -104,9 +104,9 @@ int main(){
     int K = 256;
     int lda = K;
 
-    fp32_stream_copy(M, K, lda, 1000);
+    fp32_stream_copy(M, K, lda, 10);
     printf("-----------------------\n");
 
-    fp32_convert_fp16_copy(M, K, lda, 1000);
+    fp32_convert_fp16_copy(M, K, lda, 10);
     printf("-----------------------\n");
 }
