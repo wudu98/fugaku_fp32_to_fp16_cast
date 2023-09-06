@@ -114,7 +114,7 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
           "add      x6, %[A_in], %[offset_m], lsr #9               \n"
           "add      x7, %[A_out], %[offset_m], lsr #8              \n"
 
-        ".L_loop_Start:"
+        ".L_loop_Start:                                            \n"
           "ld1w     z0.s, p0/z, [x6, x5, lsr #2]                   \n"
           "fcvt     z0.h, p0/m, z0.s                               \n"
           "st1h     z0.h, p0, [x7, x5, lsr #1]                     \n"
@@ -122,7 +122,7 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
           "whilelt  p0.s, x5, x4                                   \n"
           "b.first  .L_loop_Start                                  \n"
 
-        ".L_loop_End:"
+        ".L_loop_End:                                              \n"
 
           : [A_out]"=r"(A_out)
           : "0"(A_out),
