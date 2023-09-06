@@ -111,16 +111,19 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
         const offset = i * lda + j;
         asm volatile(
           "mov      x6, %[offset]                                  \n"
+          "mov      x7, #16                                        \n"
           "ptrue    p0.b                                           \n"
           "add      x9,  %[A_in],  x6, lsl #2                      \n"
-          "add      x10, x9, #64                                   \n"
+          "add      x10, x9,  x7, lsl #2                            \n"
           "add      x11, %[A_out], x6, lsl #1                      \n"
+          "add      x12, x11, x7, lsl #1                      \n"
           "ld1w     z0.s, p0/z, [x9]                               \n"
           "ld1w     z1.s, p0/z, [x10]                              \n"
           "fcvt     z0.h, p0/m, z0.s                               \n"
           "fcvt     z1.h, p0/m, z1.s                               \n"
-          // "st1h     z0.s, p0,   [x11]                              \n"
-          "st2h     {z0.s,z1.s}, p0, [x11]                              \n"
+          "st1h     z0.s, p0,   [x11]                              \n"
+          "st1h     z1.s, p0,   [x12]                              \n"
+          // "st2h     {z0.s,z1.s}, p0, [x11]                              \n"
 
           : [A_out]"=r"(A_out)
           : "0"(A_out),
@@ -128,7 +131,7 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
             [offset]"r"(offset),
             [N]"r"(N)
 
-          : "cc", "memory" , "x6", "x7", "x8", "x9", "x10", "x11", "z0", "z1", "z2"
+          : "cc", "memory" , "x6", "x7", "x8", "x9", "x10", "x11", "x12", "z0", "z1"
         );
       }
     }
