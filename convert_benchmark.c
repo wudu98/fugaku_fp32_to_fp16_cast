@@ -107,26 +107,18 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
   for (int _loop = 0; _loop < n_loops; ++_loop) {
     #pragma omp parallel for
     for (int i = 0; i < M; i++){
-        const offset = i * lda;
+      for (int j = 0; j < N; j+=16){
+        const offset = i * lda + j;
         asm volatile(
-          "mov      x6, %[offset]                                \n"
-          "mov      x7, %[N]                                       \n"
-          "mov      x8, #0                                         \n"
-          "whilelt  p0.s, x8, x7                                   \n"
-          "and      p1.b, p0/m, #0b010101                 \n"
+          "mov      x6, %[offset]                                  \n"
+          "pture    p0.b                                           \n"
           "add      x9,  %[A_in],  x6, lsl #2                      \n"
-          "add      x10, %[A_out], x6, lsl #1                      \n"
-
-        ".L_loop_Start:                                            \n"
-          "ld1w     z0.s, p0/z, [x9,  x8, lsl #2]                  \n"
+          // "add      x10, x9, #64                                   \n"
+          "add      x11, %[A_out], x6, lsl #1                      \n"
+          "ld1w     z0.s, p0/z, [x9]                               \n"
+          // "ld1w     z1.s, p0/z, [x10]                              \n"
           "fcvt     z0.h, p0/m, z0.s                               \n"
-          "st1h     z0.h, p1,   [x10, x8, lsl #1]                  \n"
-          "incw     x8                                             \n"
-          "whilelt  p0.s, x8, x7                                   \n"
-          "and      p1.b, p0/m, #0b010101                 \n"
-          "b.first  .L_loop_Start                                  \n"
-
-        ".L_loop_End:                                              \n"
+          "st1h     z0.h, p1,   [x11]                              \n"
 
           : [A_out]"=r"(A_out)
           : "0"(A_out),
@@ -134,7 +126,7 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
             [offset]"r"(offset),
             [N]"r"(N)
 
-          : "cc", "memory" , "x6", "x7", "x8", "x9", "x10", "z0"
+          : "cc", "memory" , "x6", "x7", "x8", "x9", "x10", "x11", "z0", "z1", "z2"
         );
       }
   }
@@ -153,6 +145,12 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
   t = ((tmp & 0x007fffff) >> 13) | ((tmp & 0x80000000) >> 16) | (((tmp & 0x7f800000) >> 13) - ((127 - 15) << 10));
   if (tmp & 0x1000) {t++;}
   printf("double check A_in[1] convert to fp16 = %#x\n", t);
+  printf("A_in[2] = %.6f, A_out[2] = %.6f\n", A_in[2], A_out[2]);
+  printf("A_in[2] = %#x, A_out[2] = %#x\n", ((int*)A_in)[2], ((short*)A_out)[2]);
+  tmp = *(int*)(&A_in[2]);
+  t = ((tmp & 0x007fffff) >> 13) | ((tmp & 0x80000000) >> 16) | (((tmp & 0x7f800000) >> 13) - ((127 - 15) << 10));
+  if (tmp & 0x1000) {t++;}
+  printf("double check A_in[2] convert to fp16 = %#x\n", t);
   free(A_in);
   free(A_out);
 }
