@@ -119,7 +119,7 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
           "add    x7, x7, %[offset_n], lsr #1                    \n"
           "ld1w   z0.s, p0/z, [x6]                               \n"
           "fcvt   z1.h, p0/m, z0.s                               \n"
-          "st1w   z1.h, p0, [x7]                                 \n"
+          "st1h   z1.h, p0, [x7]                                 \n"
 
           : [A_in]"=r"(A_in),
             [A_out]"=r"(A_out),
