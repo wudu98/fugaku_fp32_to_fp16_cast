@@ -11,7 +11,7 @@ static double get_time(struct timespec *start, struct timespec *end) {
 }
 
 static void init(float *buf, int size) {
-  #pragma omp parallel for
+  // #pragma omp parallel for
   for (int i = 0; i < size; ++i) {
       buf[i] = 1.0f * rand() / RAND_MAX;
       //buf[i] = 1.0f;
