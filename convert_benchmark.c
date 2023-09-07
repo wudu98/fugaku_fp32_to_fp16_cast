@@ -232,20 +232,52 @@ void fp32_convert_fp16_copy_v3(int M, int N, int lda, int n_loops) {
         const offset = i * lda + j;
         asm volatile(
           "mov      x6, %[offset]                                  \n"
-          "mov      x7, #16                                        \n"
+          "mov      x7, #16, lsl #2                                        \n"
           "ptrue    p0.b                                           \n"
           "add      x9,  %[A_in],  x6, lsl #2                      \n"
-          "add      x10, x9,  x7, lsl #2                            \n"
-          "add      x11, %[A_out], x6, lsl #1                      \n"
-          "add      x12, x11, x7, lsl #1                      \n"
+          "add      x10, x9,  x7                           \n"
+          "add      x11, x10, x7                           \n"
+          "add      x12, x11, x7                           \n"
+          "add      x13, %[A_out], x6, lsl #1                      \n"
+          "add      x14, x13, x7                           \n"
           "ld1w     z0.s, p0/z, [x9]                               \n"
           "ld1w     z1.s, p0/z, [x10]                              \n"
+          "ld1w     z2.s, p0/z, [x11]                              \n"
+          "ld1w     z3.s, p0/z, [x12]                              \n"
+
           "fcvt     z0.h, p0/m, z0.s                               \n"
           "fcvt     z1.h, p0/m, z1.s                               \n"
+          "fcvt     z2.h, p0/m, z2.s                               \n"
+          "fcvt     z3.h, p0/m, z3.s                               \n"
+
           "uzp1     z0.h, z0.h, z1.h                               \n"
-          "st1h     z0.h, p0,   [x11]                              \n"
-          // "st1h     z0.s, p0,   [x11]                              \n"
-          // "st1h     z1.s, p0,   [x12]                              \n"
+          "uzp1     z2.h, z2.h, z3.h                               \n"
+
+          "add      x9,  x12, x7                      \n"
+          "add      x10, x9,  x7                           \n"
+          "add      x11, x10, x7                           \n"
+          "add      x12, x11, x7                           \n"
+
+          "st1h     z0.h, p0,   [x13]                              \n"
+          "st1h     z2.h, p0,   [x14]                              \n"
+
+          "add      x13, x14, x7                      \n"
+          "add      x14, x13, x7                           \n"
+
+          "ld1w     z0.s, p0/z, [x9]                               \n"
+          "ld1w     z1.s, p0/z, [x10]                              \n"
+          "ld1w     z2.s, p0/z, [x11]                              \n"
+          "ld1w     z3.s, p0/z, [x12]                              \n"
+
+          "fcvt     z0.h, p0/m, z0.s                               \n"
+          "fcvt     z1.h, p0/m, z1.s                               \n"
+          "fcvt     z2.h, p0/m, z2.s                               \n"
+          "fcvt     z3.h, p0/m, z3.s                               \n"
+
+          "uzp1     z0.h, z0.h, z1.h                               \n"
+          "uzp1     z2.h, z2.h, z3.h                               \n"
+          "st1h     z0.h, p0,   [x13]                              \n"
+          "st1h     z2.h, p0,   [x14]                              \n"
 
           : [A_out]"=r"(A_out)
           : "0"(A_out),
