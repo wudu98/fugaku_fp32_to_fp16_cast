@@ -323,7 +323,7 @@ void fp32_convert_fp16_copy_v3(int M, int N, int lda, int n_loops) {
         //   printf("error [%d][%d]\n", i, j);
         //   flag = 0;
         // }
-        if ( *(short*)(&A_out[offset]) == t && flag == 1){
+        if ( *(short*)(&A_out[offset]) != t && flag == 1){
           printf("error [%d][%d], %#x, %#x\n", i, j, ((short*)A_out)[offset], t);
           flag = 0;
         }
