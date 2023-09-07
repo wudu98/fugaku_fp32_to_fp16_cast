@@ -183,8 +183,8 @@ void fp32_convert_fp16_copy_v2(int M, int N, int lda, int n_loops) {
   for (int _loop = 0; _loop < n_loops; ++_loop) {
     #pragma omp parallel for collapse(2)
     for (int i = 0; i < M; i++){
-      for (int j = 0; j < N; j+=128){
-        for (int jj = 0; jj < 128; jj++){
+      for (int j = 0; j < N; j+=64){
+        for (int jj = 0; jj < 64; jj++){
           A_out[i * lda + j + jj] = (__fp16)A_in[i * lda + j + jj];
         }
       }
