@@ -226,10 +226,9 @@ void fp32_convert_fp16_copy_v3(int M, int N, int lda, int n_loops) {
   double time_used = 0.0;
   clock_gettime(CLOCK_MONOTONIC_RAW, &start);
   for (int _loop = 0; _loop < n_loops; ++_loop) {
-    int i, j;
-    #pragma omp parallel for collapse(2) private(i, j)
-    for (i = 0; i < M; i++){
-      for (j = 0; j < N; j+=128){
+    #pragma omp parallel for collapse(2)
+    for (int i = 0; i < M; i++){
+      for (int j = 0; j < N; j+=128){
         const offset = i * lda + j;
         asm volatile(
           "mov      x6, %[offset]                                  \n"
@@ -241,7 +240,6 @@ void fp32_convert_fp16_copy_v3(int M, int N, int lda, int n_loops) {
           "add      x12, x11, x7                           \n"
           "add      x13, %[A_out], x6, lsl #1                      \n"
           "add      x14, x13, x7                           \n"
-          
           "ld1w     z0.s, p0/z, [x9]                               \n"
           "ld1w     z1.s, p0/z, [x10]                              \n"
           "ld1w     z2.s, p0/z, [x11]                              \n"
