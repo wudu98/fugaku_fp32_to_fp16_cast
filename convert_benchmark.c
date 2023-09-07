@@ -227,7 +227,7 @@ void fp32_convert_fp16_copy_v3(int M, int N, int lda, int n_loops) {
   double time_used = 0.0;
   clock_gettime(CLOCK_MONOTONIC_RAW, &start);
   for (int _loop = 0; _loop < n_loops; ++_loop) {
-    #pragma omp parallel for collapse(2)
+    // #pragma omp parallel for collapse(2)
     for (int i = 0; i < M; i++){
       for (int j = 0; j < N; j+=128){
         const offset = i * lda + j;
@@ -241,6 +241,7 @@ void fp32_convert_fp16_copy_v3(int M, int N, int lda, int n_loops) {
           "add      x12, x11, x7                           \n"
           "add      x13, %[A_out], x6, lsl #1                      \n"
           "add      x14, x13, x7                           \n"
+          
           "ld1w     z0.s, p0/z, [x9]                               \n"
           "ld1w     z1.s, p0/z, [x10]                              \n"
           "ld1w     z2.s, p0/z, [x11]                              \n"
@@ -349,20 +350,20 @@ int main(){
     int K = 256;
     int lda = K;
 
-    fp32_stream_copy_v0(M, K, lda, 100);
-    printf("-----------------------\n");
+    // fp32_stream_copy_v0(M, K, lda, 100);
+    // printf("-----------------------\n");
     
-    fp32_stream_copy_v1(M, K, lda, 100);
-    printf("-----------------------\n");
+    // fp32_stream_copy_v1(M, K, lda, 100);
+    // printf("-----------------------\n");
 
-    fp32_convert_fp16_copy_v0(M, K, lda, 100);
-    printf("-----------------------\n");
+    // fp32_convert_fp16_copy_v0(M, K, lda, 100);
+    // printf("-----------------------\n");
 
-    fp32_convert_fp16_copy_v1(M, K, lda, 100);
-    printf("-----------------------\n");
+    // fp32_convert_fp16_copy_v1(M, K, lda, 100);
+    // printf("-----------------------\n");
 
-    fp32_convert_fp16_copy_v2(M, K, lda, 100);
-    printf("-----------------------\n");
+    // fp32_convert_fp16_copy_v2(M, K, lda, 100);
+    // printf("-----------------------\n");
 
     fp32_convert_fp16_copy_v3(M, K, lda, 100);
     printf("-----------------------\n");
