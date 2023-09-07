@@ -49,7 +49,7 @@ void fp32_stream_copy_v0(int M, int N, int lda, int n_loops) {
   }
   clock_gettime(CLOCK_MONOTONIC_RAW, &end);
   time_used = get_time(&start, &end);
-  printf("fp32 stream copy latency: %.6f s\n", time_used / n_loops);
+  printf("fp32 stream copy latency: %.6f ms\n", time_used * 1e3 / n_loops);
   // printf("A_in[0] = %.6f, A_out[0] = %.6f\n", A_in[0], A_out[0]);
   // printf("A_in[0] = %#x, A_out[0] = %#x\n", ((int*)A_in)[0], ((int*)A_out)[0]);
   // printf("A_in[1] = %.6f, A_out[1] = %.6f\n", A_in[1], A_out[1]);
@@ -77,7 +77,7 @@ void fp32_stream_copy_v1(int M, int N, int lda, int n_loops) {
   }
   clock_gettime(CLOCK_MONOTONIC_RAW, &end);
   time_used = get_time(&start, &end);
-  printf("fp32 stream copy latency: %.6f s\n", time_used / n_loops);
+  printf("fp32 stream copy latency: %.6f ms\n", time_used * 1e3 / n_loops);
   // printf("A_in[0] = %.6f, A_out[0] = %.6f\n", A_in[0], A_out[0]);
   // printf("A_in[0] = %#x, A_out[0] = %#x\n", ((int*)A_in)[0], ((int*)A_out)[0]);
   // printf("A_in[1] = %.6f, A_out[1] = %.6f\n", A_in[1], A_out[1]);
@@ -105,7 +105,7 @@ void fp32_convert_fp16_copy_v0(int M, int N, int lda, int n_loops) {
   }
   clock_gettime(CLOCK_MONOTONIC_RAW, &end);
   time_used = get_time(&start, &end);
-  printf("fp32 convert fp16 latency: %.6f s\n", time_used / n_loops);
+  printf("fp32 convert fp16 latency: %.6f ms\n", time_used * 1e3 / n_loops);
   // printf("A_in[0] = %.6f, A_out[0] = %.6f\n", A_in[0], A_out[0]);
   // printf("A_in[0] = %#x, A_out[0] = %#x\n", ((int*)A_in)[0], ((short*)A_out)[0]);
   // int tmp = *(int*)(&A_in[0]);
@@ -147,7 +147,7 @@ void fp32_convert_fp16_copy_v1(int M, int N, int lda, int n_loops) {
   }
   clock_gettime(CLOCK_MONOTONIC_RAW, &end);
   time_used = get_time(&start, &end);
-  printf("fp32 convert fp16 latency: %.6f s\n", time_used / n_loops);
+  printf("fp32 convert fp16 latency: %.6f ms\n", time_used * 1e3 / n_loops);
   // printf("A_in[0] = %.6f, A_out[0] = %.6f\n", A_in[0], A_out[0]);
   // printf("A_in[0] = %#x, A_out[0] = %#x\n", ((int*)A_in)[0], ((short*)A_out)[0]);
   // int tmp = *(int*)(&A_in[0]);
@@ -194,7 +194,7 @@ void fp32_convert_fp16_copy_v2(int M, int N, int lda, int n_loops) {
   }
   clock_gettime(CLOCK_MONOTONIC_RAW, &end);
   time_used = get_time(&start, &end);
-  printf("fp32 convert fp16 latency: %.6f s\n", time_used / n_loops);
+  printf("fp32 convert fp16 latency: %.6f ms\n", time_used * 1e3 / n_loops);
   // printf("A_in[0] = %.6f, A_out[0] = %.6f\n", A_in[0], A_out[0]);
   // printf("A_in[0] = %#x, A_out[0] = %#x\n", ((int*)A_in)[0], ((short*)A_out)[0]);
   // int tmp = *(int*)(&A_in[0]);
