@@ -285,7 +285,7 @@ void fp32_convert_fp16_copy_v3(int M, int N, int lda, int n_loops) {
             [offset]"r"(offset),
             [N]"r"(N)
 
-          : "cc", "memory" , "x6", "x7", "x8", "x9", "x10", "x11", "x12", "z0", "z1"
+          : "cc", "memory" , "x6", "x7", "x8", "x9", "x10", "x11", "x12", "x13", "x14", "z0", "z1", "z2", "z3"
         );
       }
     }
