@@ -350,19 +350,19 @@ int main(){
     int K = 1024;
     int lda = K;
 
-    fp32_stream_copy_v0(M, K, lda, 100);
+    fp32_stream_copy_v0(M, K, lda, 1);
     printf("-----------------------\n");
     
-    fp32_stream_copy_v1(M, K, lda, 100);
+    fp32_stream_copy_v1(M, K, lda, 1);
     printf("-----------------------\n");
 
-    fp32_convert_fp16_copy_v0(M, K, lda, 100);
+    fp32_convert_fp16_copy_v0(M, K, lda, 1);
     printf("-----------------------\n");
 
-    fp32_convert_fp16_copy_v1(M, K, lda, 100);
+    fp32_convert_fp16_copy_v1(M, K, lda, 1);
     printf("-----------------------\n");
 
-    fp32_convert_fp16_copy_v2(M, K, lda, 100);
+    fp32_convert_fp16_copy_v2(M, K, lda, 1);
     printf("-----------------------\n");
 
     // fp32_convert_fp16_copy_v3(M, K, lda, 100);
