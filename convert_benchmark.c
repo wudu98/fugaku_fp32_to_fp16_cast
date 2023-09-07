@@ -11,7 +11,7 @@ static double get_time(struct timespec *start, struct timespec *end) {
 }
 
 static void init(float *buf, int size) {
-  // #pragma omp parallel for
+  #pragma omp parallel for
   for (int i = 0; i < size; ++i) {
       buf[i] = 1.0f * rand() / RAND_MAX;
       //buf[i] = 1.0f;
@@ -227,7 +227,7 @@ void fp32_convert_fp16_copy_v3(int M, int N, int lda, int n_loops) {
   double time_used = 0.0;
   clock_gettime(CLOCK_MONOTONIC_RAW, &start);
   for (int _loop = 0; _loop < n_loops; ++_loop) {
-    // #pragma omp parallel for collapse(2)
+    #pragma omp parallel for collapse(2)
     for (int i = 0; i < M; i++){
       for (int j = 0; j < N; j+=128){
         const offset = i * lda + j;
@@ -346,24 +346,24 @@ int main(){
     printf("number of threads = %d\n", omp_get_max_threads());
     printf("-----------------------\n");
 
-    int M = 256;
-    int K = 256;
+    int M = 1024;
+    int K = 1024;
     int lda = K;
 
-    // fp32_stream_copy_v0(M, K, lda, 100);
-    // printf("-----------------------\n");
+    fp32_stream_copy_v0(M, K, lda, 100);
+    printf("-----------------------\n");
     
-    // fp32_stream_copy_v1(M, K, lda, 100);
-    // printf("-----------------------\n");
+    fp32_stream_copy_v1(M, K, lda, 100);
+    printf("-----------------------\n");
 
-    // fp32_convert_fp16_copy_v0(M, K, lda, 100);
-    // printf("-----------------------\n");
+    fp32_convert_fp16_copy_v0(M, K, lda, 100);
+    printf("-----------------------\n");
 
-    // fp32_convert_fp16_copy_v1(M, K, lda, 100);
-    // printf("-----------------------\n");
+    fp32_convert_fp16_copy_v1(M, K, lda, 100);
+    printf("-----------------------\n");
 
-    // fp32_convert_fp16_copy_v2(M, K, lda, 100);
-    // printf("-----------------------\n");
+    fp32_convert_fp16_copy_v2(M, K, lda, 100);
+    printf("-----------------------\n");
 
     fp32_convert_fp16_copy_v3(M, K, lda, 100);
     printf("-----------------------\n");
