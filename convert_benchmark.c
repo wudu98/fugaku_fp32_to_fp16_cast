@@ -179,12 +179,13 @@ void fp32_convert_fp16_copy_v2(int M, int N, int lda, int n_loops) {
 
   struct timespec start, end;
   double time_used = 0.0;
+  const int nc = 256;
   clock_gettime(CLOCK_MONOTONIC_RAW, &start);
   for (int _loop = 0; _loop < n_loops; ++_loop) {
     #pragma omp parallel for collapse(2)
     for (int i = 0; i < M; i++){
-      for (int j = 0; j < N; j+=128){
-        int _up = j + 128 > N ? N - j : 128;
+      for (int j = 0; j < N; j+=nc){
+        int _up = j + nc > N ? N - j : nc;
         for (int jj = 0; jj < _up; jj++){
           A_out[i * lda + j + jj] = (__fp16)A_in[i * lda + j + jj];
         }
