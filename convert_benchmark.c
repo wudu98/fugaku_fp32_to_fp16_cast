@@ -228,7 +228,7 @@ void fp32_convert_fp16_copy_v3(int M, int N, int lda, int n_loops) {
   for (int _loop = 0; _loop < n_loops; ++_loop) {
     #pragma omp parallel for collapse(2)
     for (int i = 0; i < M; i++){
-      for (int j = 0; j < N; j+=32){
+      for (int j = 0; j < N; j+=128){
         const offset = i * lda + j;
         asm volatile(
           "mov      x6, %[offset]                                  \n"
@@ -311,21 +311,21 @@ int main(){
     int K = 256;
     int lda = K;
 
-    fp32_stream_copy_v0(M, K, lda, 10);
+    fp32_stream_copy_v0(M, K, lda, 100);
     printf("-----------------------\n");
     
-    fp32_stream_copy_v1(M, K, lda, 10);
+    fp32_stream_copy_v1(M, K, lda, 100);
     printf("-----------------------\n");
 
-    fp32_convert_fp16_copy_v0(M, K, lda, 10);
+    fp32_convert_fp16_copy_v0(M, K, lda, 100);
     printf("-----------------------\n");
 
-    fp32_convert_fp16_copy_v1(M, K, lda, 10);
+    fp32_convert_fp16_copy_v1(M, K, lda, 100);
     printf("-----------------------\n");
 
-    fp32_convert_fp16_copy_v2(M, K, lda, 10);
+    fp32_convert_fp16_copy_v2(M, K, lda, 100);
     printf("-----------------------\n");
 
-    fp32_convert_fp16_copy_v3(M, K, lda, 10);
+    fp32_convert_fp16_copy_v3(M, K, lda, 100);
     printf("-----------------------\n");
 }
